@@ -1,11 +1,56 @@
 import { useState, useRef } from "react";
+import { submitSolicitacao, submitLogin } from "./api/forms";
 
 export default function LandingPage() {
   const [showLogin, setShowLogin] = useState(false);
 
+  const handleSubmitSolicitacao = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const data = {
+      Date: formData.get("data") as string,
+      Time: formData.get("hora") as string,
+      Procedure: formData.get("procedimento") as string,
+      User: {
+        Name: formData.get("nome") as string,
+        Email: formData.get("email") as string,
+        Phone: formData.get("celular") as string,
+      },
+    };
+
+    try {
+      await submitSolicitacao(data);
+      alert("Solicitação enviada com sucesso!");
+      form.reset();
+    } catch (err) {
+      alert("Erro ao enviar solicitação");
+    }
+  };
+
+  const handleSubmitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    const data = {
+      Email: formData.get("email") as string,
+      Password: formData.get("senha") as string,
+    };
+
+    try {
+      await submitLogin(data);
+      alert("Login realizado com sucesso!");
+      setShowLogin(false);
+      form.reset();
+    } catch (err) {
+      alert("Erro ao fazer login");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
-      {/* Header */}
       <header className="w-full px-6 py-4 flex justify-between items-center bg-white shadow">
         <h1 className="text-2xl font-bold text-purple-600">Agenda Fácil</h1>
         <div>
@@ -18,34 +63,111 @@ export default function LandingPage() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="flex-1 flex items-center justify-center text-center px-4">
-        <div className="max-w-2xl">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            Sua agenda online personalizada
+      <section className="flex-1 flex items-center justify-center text-center px-4 mt-4">
+        <div className="max-w-xl w-full bg-white shadow-md rounded-xl p-4 text-left">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
+            Solicitar atendimento
           </h2>
-          <p className="text-gray-700 text-lg">
-            Crie sua página exclusiva, receba solicitações de atendimento e gerencie seus horários com facilidade.
-          </p>
-          {/* Lista de prestadores de serviços */}
+          <form className="space-y-4" onSubmit={handleSubmitSolicitacao}>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Nome
+              </label>
+              <input
+                name="nome"
+                type="text"
+                required
+                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                E-mail
+              </label>
+              <input
+                name="email"
+                type="email"
+                required
+                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Celular
+              </label>
+              <input
+                name="celular"
+                type="tel"
+                required
+                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Data do atendimento
+              </label>
+              <input
+                name="data"
+                type="date"
+                required
+                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
+                min={getTodayDate()}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Hora do atendimento
+              </label>
+              <select
+                name="hora"
+                required
+                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
+              >
+                {generateTimeSlots().map((time) => (
+                  <option key={time} value={time}>
+                    {time}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">
+                Horário comercial: 08:00–11:00 e 13:00–18:00 (intervalo de 30 min)
+              </p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Procedimento
+              </label>
+              <textarea
+                name="procedimento"
+                required
+                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-purple-600 text-white py-2 rounded hover:bg-purple-700"
+            >
+              Enviar solicitação
+            </button>
+          </form>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="text-center py-4 text-sm text-gray-500">
         &copy; {new Date().getFullYear()} Agenda Fácil. Todos os direitos reservados.
       </footer>
 
-      {/* Modal de Login */}
       {showLogin && (
         <Modal onClose={() => setShowLogin(false)} title="Entrar">
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmitLogin}>
             <input
+              name="email"
               type="email"
               placeholder="E-mail"
               className="w-full px-4 py-2 border border-gray-300 rounded"
             />
             <input
+              name="senha"
               type="password"
               placeholder="Senha"
               className="w-full px-4 py-2 border border-gray-300 rounded"
@@ -63,7 +185,6 @@ export default function LandingPage() {
   );
 }
 
-// Modal Component
 type ModalProps = {
   title: string;
   onClose: () => void;
@@ -99,4 +220,23 @@ function Modal({ title, onClose, children }: ModalProps) {
       </div>
     </div>
   );
+}
+
+function getTodayDate(): string {
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  return now.toISOString().split("T")[0];
+}
+
+function generateTimeSlots(): string[] {
+  const slots: string[] = [];
+  const addSlots = (start: number, end: number) => {
+    for (let h = start; h < end; h++) {
+      slots.push(`${String(h).padStart(2, "0")}:00`);
+      slots.push(`${String(h).padStart(2, "0")}:30`);
+    }
+  };
+  addSlots(8, 11);
+  addSlots(13, 18);
+  return slots;
 }

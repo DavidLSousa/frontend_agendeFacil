@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { submitSolicitacao, submitLogin } from "./api/forms";
+import { submitSolicitacao, submitLogin } from "../api/forms";
 
 export default function LandingPage() {
   const [showLogin, setShowLogin] = useState(false);

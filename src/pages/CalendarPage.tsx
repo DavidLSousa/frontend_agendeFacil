@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import "../css/calendar-style.css"; 
+import "../css/calendar-style.css";
+import { TokenHandler } from "../api/auth/tokenHandlers";
 
 type Evento = {
   date: string;
@@ -11,8 +13,15 @@ type Evento = {
 export default function CalendarPage() {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [dataSelecionada, setDataSelecionada] = useState<Date | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const token = TokenHandler.getInstance().getToken();
+    if (!token) {
+      navigate("/");
+      return;
+    }
+
     const fetchEventos = async () => {
       const data: Evento[] = [
         { date: "2025-05-03", title: "Consulta com João" },
@@ -22,7 +31,7 @@ export default function CalendarPage() {
     };
 
     fetchEventos();
-  }, []);
+  }, [navigate]);
 
   const tileContent = ({ date, view }: { date: Date; view: string }) => {
     if (view === "month") {

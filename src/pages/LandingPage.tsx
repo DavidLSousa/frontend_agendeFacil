@@ -1,27 +1,36 @@
 import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { submitLogin } from "../api/auth/login";
 import { submitSolicitacao } from "../api/forms";
 import { Tenant } from "../api/interfaces/ITenant";
 import { TenantState } from "../api/state/tenantState";
+import { TokenHandler } from "../api/auth/tokenHandlers";
 
 export default function LandingPage() {
   const [showLogin, setShowLogin] = useState(false);
   const [tenants, setTenants] = useState<Tenant[]>([]);
   const [selectedTenantId, setSelectedTenantId] = useState<string>("");
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const token = TokenHandler.getInstance().getToken();
+    if (token) {
+      navigate("/agenda");
+      return;
+    }
+  
     const fetchTenants = async () => {
       try {
         const res = await fetch("http://localhost:5175/api/user/tenants");
         const data = await res.json();
         setTenants(data);
-
       } catch (err) {
         console.error("Erro ao buscar tenants:", err);
       }
     };
     fetchTenants();
-  }, []);
+  }, [navigate]);
+  
 
   const handleSubmitRequest = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,7 +52,7 @@ export default function LandingPage() {
     try {
       await submitSolicitacao(data);
       form.reset();
-      setSelectedTenantId(""); // limpar tenant selecionado após envio
+      setSelectedTenantId("");
     } catch (err) {
       console.log(err);
     }
@@ -63,6 +72,7 @@ export default function LandingPage() {
       await submitLogin(data);
       setShowLogin(false);
       form.reset();
+      navigate("/agenda");
     } catch (err) {
       console.log(err);
     }
@@ -103,7 +113,6 @@ export default function LandingPage() {
                   setSelectedTenantId(selectedId);
                   TenantState.getInstance().setTenantId(selectedId);
                 }}
-                
               >
                 <option value="">Selecione...</option>
                 {tenants.map((tenant) => (

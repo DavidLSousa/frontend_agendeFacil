@@ -1,8 +1,28 @@
-import { useState, useRef } from "react";
-import { submitSolicitacao, submitLogin } from "../api/forms";
+import { useState, useEffect, useRef } from "react";
+import { submitLogin } from "../api/auth/login";
+import { submitSolicitacao } from "../api/forms";
+
+interface Profissional {
+  id: string;
+  nome: string;
+}
 
 export default function LandingPage() {
   const [showLogin, setShowLogin] = useState(false);
+  const [profissionais, setProfissionais] = useState<Profissional[]>([]);
+
+  useEffect(() => { // ALTERAR ISSO PARA SAIR DAQUI
+    const fetchProfissionais = async () => {
+      try {
+        const res = await fetch("/api/profissionais");
+        const data = await res.json();
+        setProfissionais(data);
+      } catch (err) {
+        console.error("Erro ao buscar profissionais:", err);
+      }
+    };
+    fetchProfissionais();
+  }, []);
 
   const handleSubmitSolicitacao = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -13,6 +33,7 @@ export default function LandingPage() {
       Date: formData.get("data") as string,
       Time: formData.get("hora") as string,
       Procedure: formData.get("procedimento") as string,
+      ProfissionalId: formData.get("profissional") as string,
       User: {
         Name: formData.get("nome") as string,
         Email: formData.get("email") as string,
@@ -24,7 +45,7 @@ export default function LandingPage() {
       await submitSolicitacao(data);
       form.reset();
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   };
 
@@ -43,7 +64,7 @@ export default function LandingPage() {
       setShowLogin(false);
       form.reset();
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
   };
 
@@ -66,7 +87,26 @@ export default function LandingPage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
             Solicitar atendimento
           </h2>
+
           <form className="space-y-4" onSubmit={handleSubmitSolicitacao}>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Selecione o Profissional
+              </label>
+              <select
+                name="profissional"
+                required
+                className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
+              >
+                <option value="">Selecione...</option>
+                {profissionais.map((prof) => (
+                  <option key={prof.id} value={prof.id}>
+                    {prof.nome}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Nome

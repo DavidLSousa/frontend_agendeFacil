@@ -33,7 +33,7 @@ export type LoginFormData = {
 export async function submitLogin(data: LoginFormData) {
   console.log("Submitting login: ", data);
 
-  const response = await fetch("/api/login", {
+  const response = await fetch('http://localhost:5175/api/auth/login', {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -43,5 +43,4 @@ export async function submitLogin(data: LoginFormData) {
     throw new Error("Erro ao fazer login");
   }
 
-  return await response.json();
 }

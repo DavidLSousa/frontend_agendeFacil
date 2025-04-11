@@ -1,4 +1,5 @@
 import { TokenHandler } from "./auth/tokenHandlers";
+import { TenantState } from "./state/tenantState";
 
 export type SolicitacaoFormData = {
   Date: string;
@@ -13,7 +14,16 @@ export type SolicitacaoFormData = {
 
 export async function submitSolicitacao(data: SolicitacaoFormData) {
 
-  const response = await fetch("http://localhost:5175/api/user", {
+  const tenantId = TenantState.getInstance().getTenantId();
+
+  if (!tenantId) {
+    // Deve aparecer um pop que fecha automaticamente em 3 segundos;
+    throw new Error("Tenant ID não encontrado");
+  }
+
+  const url = `http://localhost:5175/api/user/${tenantId}`;
+
+  const response = await fetch(url, {
     method: "POST",
     headers: { 
       "Content-Type": "application/json",

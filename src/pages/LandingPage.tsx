@@ -1,12 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { submitLogin } from "../api/auth/login";
 import { submitSolicitacao } from "../api/forms";
-
-interface Tenant {
-  id: string;
-  name: string;
-  procedures: string[];
-}
+import { Tenant } from "../api/interfaces/ITenant";
+import { TenantState } from "../api/state/tenantState";
 
 export default function LandingPage() {
   const [showLogin, setShowLogin] = useState(false);
@@ -19,6 +15,7 @@ export default function LandingPage() {
         const res = await fetch("http://localhost:5175/api/user/tenants");
         const data = await res.json();
         setTenants(data);
+
       } catch (err) {
         console.error("Erro ao buscar tenants:", err);
       }
@@ -101,7 +98,12 @@ export default function LandingPage() {
                 required
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
                 value={selectedTenantId}
-                onChange={(e) => setSelectedTenantId(e.target.value)}
+                onChange={(e) => {
+                  const selectedId = e.target.value;
+                  setSelectedTenantId(selectedId);
+                  TenantState.getInstance().setTenantId(selectedId);
+                }}
+                
               >
                 <option value="">Selecione...</option>
                 {tenants.map((tenant) => (

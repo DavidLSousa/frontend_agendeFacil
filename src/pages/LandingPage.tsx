@@ -5,70 +5,73 @@ import { submitSolicitacao } from "../api/forms";
 interface Tenant {
   id: string;
   name: string;
+  procedures: string[];
 }
 
 export default function LandingPage() {
   const [showLogin, setShowLogin] = useState(false);
   const [tenants, setTenants] = useState<Tenant[]>([]);
+  const [selectedTenantId, setSelectedTenantId] = useState<string>("");
 
   useEffect(() => {
     const fetchTenants = async () => {
       try {
         const res = await fetch("http://localhost:5175/api/user/tenants");
         const data = await res.json();
-
-        console.log(data);
         setTenants(data);
       } catch (err) {
-        console.error("Error fetching tenants:", err);
+        console.error("Erro ao buscar tenants:", err);
       }
     };
     fetchTenants();
   }, []);
 
-  const handleRequestSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitRequest = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    const requestData = {
-      Date: formData.get("data") as string,
-      Time: formData.get("hora") as string,
-      Procedure: formData.get("procedimento") as string,
+    const data = {
+      Date: formData.get("date") as string,
+      Time: formData.get("time") as string,
+      Procedure: formData.get("procedure") as string,
       ProfissionalId: formData.get("tenant") as string,
       User: {
-        Name: formData.get("nome") as string,
+        Name: formData.get("name") as string,
         Email: formData.get("email") as string,
-        Phone: formData.get("celular") as string,
+        Phone: formData.get("phone") as string,
       },
     };
 
     try {
-      await submitSolicitacao(requestData);
+      await submitSolicitacao(data);
       form.reset();
+      setSelectedTenantId(""); // limpar tenant selecionado após envio
     } catch (err) {
       console.log(err);
     }
   };
 
-  const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
 
-    const loginData = {
+    const data = {
       Email: formData.get("email") as string,
-      Password: formData.get("senha") as string,
+      Password: formData.get("password") as string,
     };
 
     try {
-      await submitLogin(loginData);
+      await submitLogin(data);
       setShowLogin(false);
       form.reset();
     } catch (err) {
       console.log(err);
     }
   };
+
+  const selectedTenant = tenants.find(t => t.id === selectedTenantId);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -88,15 +91,17 @@ export default function LandingPage() {
             Solicitar atendimento
           </h2>
 
-          <form className="space-y-4" onSubmit={handleRequestSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmitRequest}>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Selecione o Profissional
+                Selecione o profissional
               </label>
               <select
                 name="tenant"
                 required
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
+                value={selectedTenantId}
+                onChange={(e) => setSelectedTenantId(e.target.value)}
               >
                 <option value="">Selecione...</option>
                 {tenants.map((tenant) => (
@@ -108,17 +113,20 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Nome</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Nome
+              </label>
               <input
-                name="nome"
+                name="name"
                 type="text"
                 required
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700">E-mail</label>
+              <label className="block text-sm font-medium text-gray-700">
+                E-mail
+              </label>
               <input
                 name="email"
                 type="email"
@@ -126,32 +134,35 @@ export default function LandingPage() {
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700">Celular</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Celular
+              </label>
               <input
-                name="celular"
+                name="phone"
                 type="tel"
                 required
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700">Data do atendimento</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Data do atendimento
+              </label>
               <input
-                name="data"
+                name="date"
                 type="date"
                 required
                 min={getTodayDate()}
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
               />
             </div>
-
             <div>
-              <label className="block text-sm font-medium text-gray-700">Hora do atendimento</label>
+              <label className="block text-sm font-medium text-gray-700">
+                Hora do atendimento
+              </label>
               <select
-                name="hora"
+                name="time"
                 required
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
               >
@@ -167,12 +178,21 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700">Procedimento</label>
-              <textarea
-                name="procedimento"
+              <label className="block text-sm font-medium text-gray-700">
+                Procedimento
+              </label>
+              <select
+                name="procedure"
                 required
                 className="mt-1 w-full px-4 py-2 border border-gray-300 rounded"
-              />
+              >
+                <option value="">Selecione...</option>
+                {selectedTenant?.procedures?.map((proc) => (
+                  <option key={proc} value={proc}>
+                    {proc}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <button
@@ -191,7 +211,7 @@ export default function LandingPage() {
 
       {showLogin && (
         <Modal onClose={() => setShowLogin(false)} title="Entrar">
-          <form className="space-y-4" onSubmit={handleLoginSubmit}>
+          <form className="space-y-4" onSubmit={handleSubmitLogin}>
             <input
               name="email"
               type="email"
@@ -199,7 +219,7 @@ export default function LandingPage() {
               className="w-full px-4 py-2 border border-gray-300 rounded"
             />
             <input
-              name="senha"
+              name="password"
               type="password"
               placeholder="Senha"
               className="w-full px-4 py-2 border border-gray-300 rounded"

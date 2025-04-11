@@ -22,10 +22,9 @@ export default function LandingPage() {
 
     try {
       await submitSolicitacao(data);
-      alert("Solicitação enviada com sucesso!");
       form.reset();
     } catch (err) {
-      alert("Erro ao enviar solicitação");
+      console.log(err)
     }
   };
 
@@ -41,11 +40,10 @@ export default function LandingPage() {
 
     try {
       await submitLogin(data);
-      alert("Login realizado com sucesso!");
       setShowLogin(false);
       form.reset();
     } catch (err) {
-      alert("Erro ao fazer login");
+      console.log(err)
     }
   };
 

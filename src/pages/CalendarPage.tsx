@@ -1,12 +1,14 @@
+// pages/CalendarPage.tsx
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../css/calendar-style.css";
+import { useNavigate } from "react-router-dom";
 import { TokenHandler } from "../api/auth/tokenHandlers";
 import { TenantStorage } from "../api/state/tenantStorage";
 import { Schedule } from "../types/schedule";
 import { Evento } from "../types/Evento";
+import { TenantHeader } from "./TenantHeader";
 
 export default function CalendarPage() {
   const [eventos, setEventos] = useState<Evento[]>([]);
@@ -86,39 +88,16 @@ export default function CalendarPage() {
       case 2:
         return "Cancelado";
       case 3:
-        return "Concluido"
+        return "Concluído";
       default:
         return "Desconhecido";
     }
   };
 
-  const handleLogout = () => {
-    TokenHandler.getInstance().clearToken();
-    window.location.reload();
-  };
-
   return (
     <div className="h-screen flex flex-col bg-gray-100">
-      {/* Header */}
-      <header className="w-full bg-white shadow-md px-6 py-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold text-purple-700">Nome</h1>
-        <div className="space-x-4">
-          <button
-            className="text-sm font-medium text-purple-600 hover:text-purple-800"
-            onClick={() => navigate("/solicitacoes")}
-          >
-            Solicitações
-          </button>
-          <button
-            className="text-sm font-medium text-red-500 hover:text-red-700"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
-        </div>
-      </header>
+      <TenantHeader />
 
-      {/* Conteúdo */}
       <div className="flex-grow flex items-center justify-center p-4 relative">
         <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] flex items-center justify-center">
           <div className="w-full h-full flex">

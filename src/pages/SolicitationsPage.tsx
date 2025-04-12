@@ -1,9 +1,11 @@
+// pages/SolicitationsPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TokenHandler } from "../api/auth/tokenHandlers";
 import { TenantStorage } from "../api/state/tenantStorage";
 import { Schedule } from "../types/schedule";
 import { Evento } from "../types/Evento";
+import { TenantHeader } from "./TenantHeader";
 
 export default function SolicitationsPage() {
   const [solicitacoes, setSolicitacoes] = useState<Evento[]>([]);
@@ -53,8 +55,10 @@ export default function SolicitationsPage() {
   }, [navigate]);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-3xl mx-auto">
+    <div className="min-h-screen bg-gray-100">
+      <TenantHeader />
+
+      <div className="max-w-3xl mx-auto p-6">
         <h1 className="text-2xl font-bold text-purple-700 mb-6">Solicitações Pendentes</h1>
 
         {solicitacoes.length === 0 ? (

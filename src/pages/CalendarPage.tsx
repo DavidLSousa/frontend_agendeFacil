@@ -85,6 +85,8 @@ export default function CalendarPage() {
         return "Confirmado";
       case 2:
         return "Cancelado";
+      case 3:
+        return "Concluido"
       default:
         return "Desconhecido";
     }

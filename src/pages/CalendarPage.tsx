@@ -8,8 +8,17 @@ import { TenantStorage } from "../api/state/tenantStorage";
 import { Schedule } from "../types/schedule";
 
 type Evento = {
+  id: string;
   date: string;
   title: string;
+  time: string;
+  status: number;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string;
+  };
 };
 
 export default function CalendarPage() {
@@ -25,18 +34,16 @@ export default function CalendarPage() {
     }
 
     const fetchEventos = async () => {
-
       const tenantId = TenantStorage.getInstance().getTenantId();
-      console.log("tenantId", tenantId)
       const url = `http://localhost:5175/api/${tenantId}/schedule`;
 
       try {
         const res = await fetch(url, {
           method: "GET",
           headers: {
-            "Authorization": `Bearer ${TokenHandler.getInstance().getToken()}`,
+            Authorization: `Bearer ${TokenHandler.getInstance().getToken()}`,
             "Content-Type": "application/json",
-          }
+          },
         });
 
         if (!res.ok) throw new Error("Erro ao buscar eventos");
@@ -44,12 +51,15 @@ export default function CalendarPage() {
         const data = await res.json();
 
         const eventosFormatados: Evento[] = data.map((evento: Schedule) => ({
-          date: new Date(evento.date).toISOString().split("T")[0], 
+          id: evento.id,
           title: evento.procedure,
+          date: new Date(evento.date).toISOString().split("T")[0],
+          time: evento.time,
+          status: evento.status,
+          user: evento.user,
         }));
 
         setEventos(eventosFormatados);
-
       } catch (err) {
         console.log("Erro ao buscar eventos:", err);
       }
@@ -64,7 +74,9 @@ export default function CalendarPage() {
       const temEvento = eventos.some((evento) => evento.date === diaFormatado);
 
       if (temEvento) {
-        return <div className="w-2 h-2 bg-purple-500 rounded-full mx-auto mt-1" />;
+        return (
+          <div className="w-2 h-2 bg-purple-500 rounded-full mx-auto mt-1" />
+        );
       }
     }
     return null;
@@ -76,6 +88,19 @@ export default function CalendarPage() {
       month: "long",
       year: "numeric",
     });
+  };
+
+  const formatarStatus = (status: number) => {
+    switch (status) {
+      case 0:
+        return "Pendente";
+      case 1:
+        return "Confirmado";
+      case 2:
+        return "Cancelado";
+      default:
+        return "Desconhecido";
+    }
   };
 
   return (
@@ -115,7 +140,51 @@ export default function CalendarPage() {
             </div>
 
             <div className="border-t pt-4">
-              <p className="text-gray-500 text-sm italic">Carregando dados do dia...</p>
+              {(() => {
+                const diaSelecionado =
+                  dataSelecionada.toISOString().split("T")[0];
+                const eventosDoDia = eventos.filter(
+                  (evento) => evento.date === diaSelecionado
+                );
+
+                if (eventosDoDia.length === 0) {
+                  return (
+                    <p className="text-gray-500 text-sm italic">
+                      Nenhum evento encontrado.
+                    </p>
+                  );
+                }
+
+                return (
+                  <ul className="space-y-2">
+                    {eventosDoDia.map((evento, index) => (
+                      <li
+                        key={index}
+                        className="border rounded p-3 bg-gray-50 shadow-sm"
+                      >
+                        <p className="font-semibold text-purple-700">
+                          {evento.title}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          🕒 Horário: {evento.time.slice(0, 5)}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          📋 Status: {formatarStatus(evento.status)}
+                        </p>
+                        <p className="text-sm mt-2 text-gray-800">
+                          👤 Paciente: {evento.user.name}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          📧 {evento.user.email}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          📞 {evento.user.phone}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                );
+              })()}
             </div>
           </div>
         </div>

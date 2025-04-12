@@ -3,7 +3,7 @@ import Modal from "../components/Modal";
 import LoginForm from "../components/LoginForm";
 import RequestForm from "../components/RequestForm";
 import { Tenant } from "../api/interfaces/ITenant";
-import { useAuthRedirect } from "../hooks/UseAuthRedirect";
+import { useAuthRedirect } from "../hooks/useAuthRedirect";
 
 export default function LandingPage() {
   const [showLogin, setShowLogin] = useState(false);

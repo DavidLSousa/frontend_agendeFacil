@@ -23,6 +23,9 @@ export default function CalendarPage() {
     }
 
     const fetchEventos = async () => {
+
+      
+
       const data: Evento[] = [
         { date: "2025-05-03", title: "Consulta com João" },
         { date: "2025-05-07", title: "Retorno com Maria" },

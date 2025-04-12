@@ -4,6 +4,7 @@ export enum SolicitationStatus {
   PENDING = "PENDING",
   CONFIRMED = "CONFIRMED",
   CANCELLED = "CANCELLED",
+  DONE = "DONE",
 }
 
 export type Schedule = {

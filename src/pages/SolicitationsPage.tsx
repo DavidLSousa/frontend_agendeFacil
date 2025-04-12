@@ -1,3 +1,4 @@
+// pages/SolicitationsPage.tsx
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TokenHandler } from "../api/auth/tokenHandlers";
@@ -53,6 +54,28 @@ export default function SolicitationsPage() {
     fetchSolicitacoes();
   }, [navigate]);
 
+  const atualizarStatus = async (id: string, novoStatus: "CONFIRMED" | "CANCELLED") => {
+    const token = TokenHandler.getInstance().getToken();
+    const tenantId = TenantStorage.getInstance().getTenantId();
+    const url = `http://localhost:5175/api/${tenantId}/solicitations?status=${novoStatus}&scheduleId=${id}`;
+
+    try {
+      const res = await fetch(url, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) throw new Error("Erro ao atualizar status");
+
+      setSolicitacoes((prev) => prev.filter((s) => s.id !== id));
+    } catch (err) {
+      console.log("Erro ao atualizar status da solicitação:", err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <TenantHeader />
@@ -65,14 +88,34 @@ export default function SolicitationsPage() {
         ) : (
           <ul className="space-y-4">
             {solicitacoes.map((evento) => (
-              <li key={evento.id} className="bg-white shadow p-4 rounded-lg border">
-                <p className="text-lg font-semibold text-purple-700">{evento.title}</p>
-                <p className="text-sm text-gray-600">📅 Data: {evento.date}</p>
-                <p className="text-sm text-gray-600">🕒 Horário: {evento.time.slice(0, 5)}</p>
-                <div className="mt-2 text-sm text-gray-700">
-                  <p>👤 {evento.user.name}</p>
-                  <p>📧 {evento.user.email}</p>
-                  <p>📞 {evento.user.phone}</p>
+              <li
+                key={evento.id}
+                className="bg-white shadow p-4 rounded-lg border space-y-2"
+              >
+                <div>
+                  <p className="text-lg font-semibold text-purple-700">{evento.title}</p>
+                  <p className="text-sm text-gray-600">📅 Data: {evento.date}</p>
+                  <p className="text-sm text-gray-600">🕒 Horário: {evento.time.slice(0, 5)}</p>
+                  <div className="mt-2 text-sm text-gray-700">
+                    <p>👤 {evento.user.name}</p>
+                    <p>📧 {evento.user.email}</p>
+                    <p>📞 {evento.user.phone}</p>
+                  </div>
+                </div>
+
+                <div className="flex gap-4 mt-3">
+                  <button
+                    onClick={() => atualizarStatus(evento.id, "CONFIRMED")}
+                    className="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded"
+                  >
+                    Aceitar
+                  </button>
+                  <button
+                    onClick={() => atualizarStatus(evento.id, "CANCELLED")}
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded"
+                  >
+                    Negar
+                  </button>
                 </div>
               </li>
             ))}

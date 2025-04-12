@@ -18,7 +18,7 @@ export default function SolicitationsPage() {
 
     const fetchSolicitacoes = async () => {
       const tenantId = TenantStorage.getInstance().getTenantId();
-      const url = `http://localhost:5175/api/${tenantId}/schedule`;
+      const url = `http://localhost:5175/api/${tenantId}/solicitations`;
 
       try {
         const res = await fetch(url, {

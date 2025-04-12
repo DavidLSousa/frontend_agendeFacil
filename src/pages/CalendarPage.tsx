@@ -4,6 +4,8 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "../css/calendar-style.css";
 import { TokenHandler } from "../api/auth/tokenHandlers";
+import { TenantStorage } from "../api/state/tenantStorage";
+import { Schedule } from "../types/schedule";
 
 type Evento = {
   date: string;
@@ -24,13 +26,39 @@ export default function CalendarPage() {
 
     const fetchEventos = async () => {
 
-      
+      const tenantId = TenantStorage.getInstance().getTenantId();
+      console.log("tenantId", tenantId)
+      const url = `http://localhost:5175/api/${tenantId}/schedule`;
 
-      const data: Evento[] = [
-        { date: "2025-05-03", title: "Consulta com João" },
-        { date: "2025-05-07", title: "Retorno com Maria" },
-      ];
-      setEventos(data);
+      try {
+        const res = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${TokenHandler.getInstance().getToken()}`,
+            "Content-Type": "application/json",
+          }
+        });
+
+        if (!res.ok) throw new Error("Erro ao buscar eventos");
+
+        const data = await res.json();
+
+        console.log(data)
+
+        const eventosFormatados: Evento[] = data.map((evento: Schedule) => ({
+          date: evento.date,
+          title: evento.procedure,
+        }));
+
+        setEventos(eventosFormatados);
+
+      } catch (err) {
+        console.log("Erro ao buscar eventos:", err);
+      }
+      // const data: Evento[] = [
+      //   { date: "2025-05-03", title: "Consulta com João" },
+      //   { date: "2025-05-07", title: "Retorno com Maria" },
+      // ];
     };
 
     fetchEventos();

@@ -6,20 +6,7 @@ import "../css/calendar-style.css";
 import { TokenHandler } from "../api/auth/tokenHandlers";
 import { TenantStorage } from "../api/state/tenantStorage";
 import { Schedule } from "../types/schedule";
-
-type Evento = {
-  id: string;
-  date: string;
-  title: string;
-  time: string;
-  status: number;
-  user: {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-  };
-};
+import { Evento } from "../types/Evento";
 
 export default function CalendarPage() {
   const [eventos, setEventos] = useState<Evento[]>([]);
@@ -41,7 +28,7 @@ export default function CalendarPage() {
         const res = await fetch(url, {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${TokenHandler.getInstance().getToken()}`,
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         });
@@ -103,92 +90,119 @@ export default function CalendarPage() {
     }
   };
 
+  const handleLogout = () => {
+    TokenHandler.getInstance().clearToken();
+    window.location.reload();
+  };
+
   return (
-    <div className="h-screen flex items-center justify-center bg-gray-100 p-4 relative">
-      <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] flex items-center justify-center">
-        <div className="w-full h-full flex">
-          <div className="flex-grow">
-            <Calendar
-              tileContent={tileContent}
-              locale="pt-BR"
-              onClickDay={(value) => setDataSelecionada(value)}
-              className="w-full h-full text-base sm:text-xl [&_.react-calendar]:w-full [&_.react-calendar]:h-full"
-            />
-          </div>
-        </div>
-      </div>
-
-      {dataSelecionada && (
-        <div
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-          onClick={() => setDataSelecionada(null)}
-        >
-          <div
-            className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md mx-4"
-            onClick={(e) => e.stopPropagation()}
+    <div className="h-screen flex flex-col bg-gray-100">
+      {/* Header */}
+      <header className="w-full bg-white shadow-md px-6 py-4 flex justify-between items-center">
+        <h1 className="text-xl font-bold text-purple-700">Nome</h1>
+        <div className="space-x-4">
+          <button
+            className="text-sm font-medium text-purple-600 hover:text-purple-800"
+            onClick={() => navigate("/solicitacoes")}
           >
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">
-                {formatarData(dataSelecionada)}
-              </h2>
-              <button
-                className="text-gray-500 hover:text-gray-700 text-sm"
-                onClick={() => setDataSelecionada(null)}
-              >
-                Fechar
-              </button>
-            </div>
+            Solicitações
+          </button>
+          <button
+            className="text-sm font-medium text-red-500 hover:text-red-700"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        </div>
+      </header>
 
-            <div className="border-t pt-4">
-              {(() => {
-                const diaSelecionado =
-                  dataSelecionada.toISOString().split("T")[0];
-                const eventosDoDia = eventos.filter(
-                  (evento) => evento.date === diaSelecionado
-                );
-
-                if (eventosDoDia.length === 0) {
-                  return (
-                    <p className="text-gray-500 text-sm italic">
-                      Nenhum evento encontrado.
-                    </p>
-                  );
-                }
-
-                return (
-                  <ul className="space-y-2">
-                    {eventosDoDia.map((evento, index) => (
-                      <li
-                        key={index}
-                        className="border rounded p-3 bg-gray-50 shadow-sm"
-                      >
-                        <p className="font-semibold text-purple-700">
-                          {evento.title}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          🕒 Horário: {evento.time.slice(0, 5)}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          📋 Status: {formatarStatus(evento.status)}
-                        </p>
-                        <p className="text-sm mt-2 text-gray-800">
-                          👤 Paciente: {evento.user.name}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          📧 {evento.user.email}
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          📞 {evento.user.phone}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                );
-              })()}
+      {/* Conteúdo */}
+      <div className="flex-grow flex items-center justify-center p-4 relative">
+        <div className="bg-white shadow-md rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[90vh] flex items-center justify-center">
+          <div className="w-full h-full flex">
+            <div className="flex-grow">
+              <Calendar
+                tileContent={tileContent}
+                locale="pt-BR"
+                onClickDay={(value) => setDataSelecionada(value)}
+                className="w-full h-full text-base sm:text-xl [&_.react-calendar]:w-full [&_.react-calendar]:h-full"
+              />
             </div>
           </div>
         </div>
-      )}
+
+        {dataSelecionada && (
+          <div
+            className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+            onClick={() => setDataSelecionada(null)}
+          >
+            <div
+              className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md mx-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold">
+                  {formatarData(dataSelecionada)}
+                </h2>
+                <button
+                  className="text-gray-500 hover:text-gray-700 text-sm"
+                  onClick={() => setDataSelecionada(null)}
+                >
+                  Fechar
+                </button>
+              </div>
+
+              <div className="border-t pt-4">
+                {(() => {
+                  const diaSelecionado =
+                    dataSelecionada.toISOString().split("T")[0];
+                  const eventosDoDia = eventos.filter(
+                    (evento) => evento.date === diaSelecionado
+                  );
+
+                  if (eventosDoDia.length === 0) {
+                    return (
+                      <p className="text-gray-500 text-sm italic">
+                        Nenhum evento encontrado.
+                      </p>
+                    );
+                  }
+
+                  return (
+                    <ul className="space-y-2">
+                      {eventosDoDia.map((evento, index) => (
+                        <li
+                          key={index}
+                          className="border rounded p-3 bg-gray-50 shadow-sm"
+                        >
+                          <p className="font-semibold text-purple-700">
+                            {evento.title}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            🕒 Horário: {evento.time.slice(0, 5)}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            📋 Status: {formatarStatus(evento.status)}
+                          </p>
+                          <p className="text-sm mt-2 text-gray-800">
+                            👤 Paciente: {evento.user.name}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            📧 {evento.user.email}
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            📞 {evento.user.phone}
+                          </p>
+                        </li>
+                      ))}
+                    </ul>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

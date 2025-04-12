@@ -1,4 +1,3 @@
-// components/TenantHeader.tsx
 import { useNavigate, useLocation } from "react-router-dom";
 import { TokenHandler } from "../api/auth/tokenHandlers";
 

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { submitSolicitacao } from "../api/forms";
 import { Tenant } from "../api/interfaces/ITenant";
-import { TenantState } from "../api/state/tenantState";
+import { TenantStorage } from "../api/state/tenantStorage";
 import { generateTimeSlots, getTodayDate } from "../utils/dateUtils";
 
 type Props = {
@@ -53,7 +53,7 @@ export default function RequestForm({ tenants }: Props) {
           onChange={(e) => {
             const selectedId = e.target.value;
             setSelectedTenantId(selectedId);
-            TenantState.getInstance().setTenantId(selectedId);
+            TenantStorage.getInstance().setTenantId(selectedId);
           }}
         >
           <option value="">Selecione...</option>

@@ -1,5 +1,5 @@
 import { TokenHandler } from "./auth/tokenHandlers";
-import { TenantState } from "./state/tenantState";
+import { TenantStorage } from "./state/tenantStorage";
 
 export type SolicitacaoFormData = {
   Date: string;
@@ -14,7 +14,7 @@ export type SolicitacaoFormData = {
 
 export async function submitSolicitacao(data: SolicitacaoFormData) {
 
-  const tenantId = TenantState.getInstance().getTenantId();
+  const tenantId = TenantStorage.getInstance().getTenantId();
 
   if (!tenantId) {
     // Deve aparecer um pop que fecha automaticamente em 3 segundos;

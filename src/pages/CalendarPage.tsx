@@ -43,10 +43,8 @@ export default function CalendarPage() {
 
         const data = await res.json();
 
-        console.log(data)
-
         const eventosFormatados: Evento[] = data.map((evento: Schedule) => ({
-          date: evento.date,
+          date: new Date(evento.date).toISOString().split("T")[0], 
           title: evento.procedure,
         }));
 
@@ -55,10 +53,6 @@ export default function CalendarPage() {
       } catch (err) {
         console.log("Erro ao buscar eventos:", err);
       }
-      // const data: Evento[] = [
-      //   { date: "2025-05-03", title: "Consulta com João" },
-      //   { date: "2025-05-07", title: "Retorno com Maria" },
-      // ];
     };
 
     fetchEventos();

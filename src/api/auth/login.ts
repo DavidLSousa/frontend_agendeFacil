@@ -1,3 +1,4 @@
+import { TenantState } from "../state/tenantState";
 import { TokenHandler } from "./tokenHandlers";
 
 export type LoginFormData = {
@@ -21,6 +22,8 @@ export async function submitLogin(data: LoginFormData) {
 
     const tokenHandler = TokenHandler.getInstance();
     tokenHandler.setToken(resData.token);
+    
+    TenantState.getInstance().setTenantId(resData.tenantId);
 
   } catch (err) {
     console.log(err)

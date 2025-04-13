@@ -23,7 +23,7 @@ export async function submitLogin(data: LoginFormData) {
     const tokenHandler = TokenHandler.getInstance();
     tokenHandler.setToken(resData.token);
     
-    TenantStorage.getInstance().setTenantId(resData.tenantId);
+    TenantStorage.getInstance().setTenant(resData.tenantDTO);
 
   } catch (err) {
     console.log(err)

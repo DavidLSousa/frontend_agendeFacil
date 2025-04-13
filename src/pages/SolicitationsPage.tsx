@@ -19,7 +19,7 @@ export default function SolicitationsPage() {
     }
 
     const fetchSolicitacoes = async () => {
-      const tenantId = TenantStorage.getInstance().getTenantId();
+      const tenantId = TenantStorage.getInstance().getTenant().id;
       const url = `http://localhost:5175/api/${tenantId}/solicitations`;
 
       try {
@@ -56,7 +56,7 @@ export default function SolicitationsPage() {
 
   const atualizarStatus = async (id: string, novoStatus: "CONFIRMED" | "CANCELED") => {
     const token = TokenHandler.getInstance().getToken();
-    const tenantId = TenantStorage.getInstance().getTenantId();
+    const tenantId = TenantStorage.getInstance().getTenant().id;
     const url = `http://localhost:5175/api/${tenantId}/solicitations?status=${novoStatus}&scheduleId=${id}`;
 
     try {

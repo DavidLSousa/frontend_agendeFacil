@@ -22,7 +22,7 @@ export default function CalendarPage() {
     }
 
     const fetchEventos = async () => {
-      const tenantId = TenantStorage.getInstance().getTenantId();
+      const tenantId = TenantStorage.getInstance().getTenant().id;
       const url = `http://localhost:5175/api/${tenantId}/schedule`;
 
       try {

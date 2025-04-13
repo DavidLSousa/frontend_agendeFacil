@@ -1,9 +1,17 @@
 import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { TokenHandler } from "../api/auth/tokenHandlers";
+import { TenantStorage } from "../api/state/tenantStorage";
 
 export function TenantHeader() {
   const navigate = useNavigate();
   const location = useLocation();
+  const [tenantName, setTenantName] = useState("");
+
+  useEffect(() => {
+    const nome = TenantStorage.getInstance().getTenant()?.name || "Profissional";
+    setTenantName(nome);
+  }, []);
 
   const handleLogout = () => {
     TokenHandler.getInstance().clearToken();
@@ -12,7 +20,9 @@ export function TenantHeader() {
 
   return (
     <header className="w-full bg-white shadow p-4 flex justify-between items-center mb-4">
-      <h1 className="text-xl font-bold text-purple-700">Nome</h1>
+      <h1 className="text-xl font-bold text-purple-700">
+        {tenantName}
+      </h1>
       <nav className="space-x-4">
         {location.pathname !== "/agenda" && (
           <button

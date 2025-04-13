@@ -54,7 +54,7 @@ export default function SolicitationsPage() {
     fetchSolicitacoes();
   }, [navigate]);
 
-  const atualizarStatus = async (id: string, novoStatus: "CONFIRMED" | "CANCELLED") => {
+  const atualizarStatus = async (id: string, novoStatus: "CONFIRMED" | "CANCELED") => {
     const token = TokenHandler.getInstance().getToken();
     const tenantId = TenantStorage.getInstance().getTenantId();
     const url = `http://localhost:5175/api/${tenantId}/solicitations?status=${novoStatus}&scheduleId=${id}`;
@@ -111,7 +111,7 @@ export default function SolicitationsPage() {
                     Aceitar
                   </button>
                   <button
-                    onClick={() => atualizarStatus(evento.id, "CANCELLED")}
+                    onClick={() => atualizarStatus(evento.id, "CANCELED")}
                     className="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded"
                   >
                     Negar

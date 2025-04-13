@@ -3,7 +3,7 @@ import { UserDTO } from "./userDTO";
 export enum SolicitationStatus {
   PENDING = "PENDING",
   CONFIRMED = "CONFIRMED",
-  CANCELLED = "CANCELLED",
+  CANCELED = "CANCELED",
   DONE = "DONE",
 }
 

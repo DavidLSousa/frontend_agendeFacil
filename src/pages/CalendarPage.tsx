@@ -34,6 +34,12 @@ export default function CalendarPage() {
           },
         });
 
+        if (res.status === 401) {
+          TokenHandler.getInstance().clearToken();
+          navigate("/");
+          return;
+        }
+
         if (!res.ok) throw new Error("Erro ao buscar eventos");
 
         const data = await res.json();

@@ -1,4 +1,4 @@
-import { UserDTO } from "./userDTO";
+import { UserDTO } from "./UserDTO";
 
 export enum SolicitationStatus {
   PENDING = "PENDING",

@@ -5,7 +5,7 @@ import "../css/calendar-style.css";
 import { useNavigate } from "react-router-dom";
 import { TokenHandler } from "../api/auth/tokenHandlers";
 import { TenantStorage } from "../api/state/tenantStorage";
-import { Schedule } from "../types/schedule";
+import { Schedule } from "../types/Schedule";
 import { Evento } from "../types/Evento";
 import { TenantHeader } from "./TenantHeader";
 

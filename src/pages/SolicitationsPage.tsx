@@ -31,6 +31,12 @@ export default function SolicitationsPage() {
           },
         });
 
+        if (res.status === 401) {
+          TokenHandler.getInstance().clearToken();
+          navigate("/");
+          return;
+        }
+
         if (!res.ok) throw new Error("Erro ao buscar solicitações");
 
         const data = await res.json();

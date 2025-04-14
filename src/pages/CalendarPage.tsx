@@ -23,7 +23,9 @@ export default function CalendarPage() {
 
     const fetchEvents = async () => {
       const tenantId = TenantStorage.getInstance().getTenant().id;
-      const url = `http://localhost:5175/api/${tenantId}/schedule`;
+      
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const url = `${apiUrl}/api/${tenantId}/schedule`;
 
       try {
         const res = await fetch(url, {
@@ -65,7 +67,9 @@ export default function CalendarPage() {
   const updateEventStatus = async (id: string, newStatus: number) => {
     const token = TokenHandler.getInstance().getToken();
     const tenantId = TenantStorage.getInstance().getTenant().id;
-    const url = `http://localhost:5175/api/${tenantId}/solicitations?status=${newStatus}&scheduleId=${id}`;
+    
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const url = `${apiUrl}/api/${tenantId}/solicitations?status=${newStatus}&scheduleId=${id}`;
 
     try {
       const res = await fetch(url, {

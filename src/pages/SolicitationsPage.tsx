@@ -20,7 +20,9 @@ export default function SolicitationsPage() {
 
     const fetchSolicitacoes = async () => {
       const tenantId = TenantStorage.getInstance().getTenant().id;
-      const url = `http://localhost:5175/api/${tenantId}/solicitations`;
+
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const url = `${apiUrl}/api/${tenantId}/solicitations`;
 
       try {
         const res = await fetch(url, {
@@ -63,9 +65,12 @@ export default function SolicitationsPage() {
   const atualizarStatus = async (id: string, novoStatus: "CONFIRMED" | "CANCELED") => {
     const token = TokenHandler.getInstance().getToken();
     const tenantId = TenantStorage.getInstance().getTenant().id;
-    const url = `http://localhost:5175/api/${tenantId}/solicitations?status=${novoStatus}&scheduleId=${id}`;
+    
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const url = `${apiUrl}/api/${tenantId}/solicitations?status=${novoStatus}&scheduleId=${id}`;
 
     try {
+
       const res = await fetch(url, {
         method: "PUT",
         headers: {

@@ -8,7 +8,10 @@ export type LoginFormData = {
 
 export async function submitLogin(data: LoginFormData) {
   try {
-    const response = await fetch('http://localhost:5175/api/auth/login', {
+    const apiUrl = import.meta.env.VITE_API_URL;
+    const url = `${apiUrl}/api/auth/login`;
+    
+    const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),

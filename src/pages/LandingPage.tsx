@@ -13,11 +13,16 @@ export default function LandingPage() {
 
   useEffect(() => {
     const fetchTenants = async () => {
+      const apiUrl = import.meta.env.VITE_API_URL;
+      const url = `${apiUrl}/api/user/tenants`;
+
       try {
-        const res = await fetch("http://localhost:5175/api/user/tenants");
+        const res = await fetch(url);
         const data = await res.json();
+
         setTenants(data);
       } catch (err) {
+        console.log(err)
         console.error("Erro ao buscar tenants:", err);
       }
     };

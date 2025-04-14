@@ -21,7 +21,8 @@ export async function submitSolicitacao(data: SolicitacaoFormData) {
     throw new Error("Tenant ID não encontrado");
   }
 
-  const url = `http://localhost:5175/api/user/${tenantId}`;
+  const apiUrl = import.meta.env.VITE_API_URL;
+  const url = `${apiUrl}/api/user/${tenantId}`;
 
   const response = await fetch(url, {
     method: "POST",

@@ -1,54 +1,30 @@
-# React + TypeScript + Vite
+# Frontend - AgendeFácil
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este repositório contém o código-fonte do frontend do projeto **AgendeFácil**, desenvolvido para proporcionar uma experiência fluida e responsiva para profissionais e clientes.
 
-Currently, two official plugins are available:
+## Tecnologias
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React
+- TypeScript
+- Tailwind CSS
+- Docker (container)
 
-## Expanding the ESLint configuration
+## Descrição
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+O frontend permite:
+- Criação de páginas personalizadas para cada profissional
+- Agendamento de atendimentos de forma intuitiva
+- Visualização de calendário interativo
+- Área administrativa para gestão de agendamentos e serviços
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+A aplicação roda dentro de um container Docker, garantindo padronização entre ambientes.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Links
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- [Imagem Frontend no Docker Hub](https://hub.docker.com/r/davidlsousa/frontend-agendefacil)
+- [Imagem Backend no Docker Hub](https://hub.docker.com/r/davidlsousa/backend-agendefacil)
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## Repositórios Relacionados
+
+- [Backend - AgendeFácil](https://github.com/DavidLSousa/backend_agendeFacil)
+- [Database - AgendeFácil](https://github.com/DavidLSousa/database_agendeFacil)
